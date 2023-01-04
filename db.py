@@ -24,9 +24,9 @@ class BotDB:
     def add_record(self, user_id, operation, value):
         """Создаем запись о доходах/расходах"""
         self.cursor.execute("INSERT INTO `records` (`users_id`, `operation`, `value`) VALUES (?, ?, ?)",
-            (self.get_user_id(user_id),
-            operation == "+",
-            value))
+            (self.get_user_id(user_id), operation == "+", value))
+        self.cursor.execute("INSERT INTO 'records' ('use_id','balance') VALUES (?,?)", (self.get_user_id(user_id),value))
+
         return self.conn.commit()
 
     def get_records(self, user_id, within = "all"):
@@ -45,6 +45,11 @@ class BotDB:
             result = self.cursor.execute("SELECT * FROM `records` WHERE `users_id` = ? ORDER BY `date`",
                 (self.get_user_id(user_id),))
 
+        return result.fetchall()
+
+    def balance(self,user_id):
+        """Получаем информацию баланса пользователя"""
+        result = self.cursor.execute("SELECT * FROM `records` WHERE `users_id` = ? ",)
         return result.fetchall()
 
     def close(self):
